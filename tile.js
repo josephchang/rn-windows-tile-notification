@@ -1,10 +1,16 @@
+import Visual from './visual';
+
 function Tile() {
+  let $visual = new Visual();
+
   return {
     setVisual: (visual) => {
-      this.visual = visual;
+      if (visual instanceof Visual) {
+        $visual = visual;
+      }
     },
     getXml: () => (
-      `<tile>${this.visual ? this.visual.getXml() : ''}</tile>`
+      `<tile>${$visual.getXml()}</tile>`
     ),
   };
 }

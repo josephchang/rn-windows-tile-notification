@@ -1,27 +1,36 @@
-import isValidStringOption from './utils/isValidStringOption';
 import getXmlAttributes from './utils/getXmlAttributes';
-import { IMAGEALIGN, IMAGECROP, IMAGEPLACEMENT} from './constants';
+import validateProps from './utils/validateProps';
+import { IMAGEALIGN, IMAGECROP, IMAGEPLACEMENT } from './constants';
 
-function Image(props = {}) {
-  this.props = {
-    ...props,
+function Image(options = {}) {
+  const $props = {
+    ...options,
   };
 
-  if (!isValidStringOption(props['hint-align'], IMAGEALIGN)) {
-    delete this.props['hint-align'];
-  }
+  const rules = {
+    src: 'string',
+    placement: {
+      type: Object.keys(IMAGEPLACEMENT),
+      onError: () => delete $props.placement,
+    },
+    alt: 'string',
+    addImageQuery: 'boolean',
+    'hint-crop': {
+      type: Object.keys(IMAGECROP),
+      onError: () => delete $props['hint-crop'],
+    },
+    'hint-removeMargin': 'boolean',
+    'hint-align': {
+      type: Object.keys(IMAGEALIGN),
+      onError: () => delete $props['hint-align'],
+    },
+  };
 
-  if (!isValidStringOption(props['hint-crop'], IMAGECROP)) {
-    delete this.props['hint-crop'];
-  }
-
-  if (!isValidStringOption(props.placement, IMAGEPLACEMENT)) {
-    delete this.props.placement;
-  }
+  validateProps($props, rules);
 
   return {
     getXml: () => (
-      `<image${getXmlAttributes(this.props)} />`
+      `<image${getXmlAttributes($props)} />`
     ),
   };
 }

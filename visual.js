@@ -1,32 +1,46 @@
-import isValidStringOption from './utils/isValidStringOption';
+import validateProps from './utils/validateProps';
 import getChildrenXml from './utils/getChildrenXml';
 import getXmlAttributes from './utils/getXmlAttributes';
+import { addChild, addChildren } from './utils/addChild';
+import Binding from './binding';
 
 import { BRANDING } from './constants';
 
-function Visual(props = {}) {
-  this.props = {
-    ...props,
+function Visual(options = {}) {
+  const $props = {
+    ...options,
   };
 
-  if (!isValidStringOption(props.branding, BRANDING)) {
-    delete this.props.branding;
-  }
+  let $bindings = [];
+  const $allowedChildren = [Binding];
 
-  this.bindings = [];
+  const rules = {
+    version: 'number',
+    lang: 'string',
+    baseUri: 'string',
+    branding: {
+      type: Object.keys(BRANDING),
+      onError: () => delete $props.branding,
+    },
+    addImageQuery: 'boolean',
+    contentId: 'string',
+    displayName: 'string',
+  };
+
+  validateProps($props, rules);
 
   return {
     addBinding: (binding) => {
-      this.bindings.push(binding);
+      addChild(binding, $bindings, $allowedChildren);
     },
     addBindings: (bindings) => {
-      this.bindings.concat(bindings);
+      addChildren(bindings, $bindings, $allowedChildren);
     },
     clearBindings: () => {
-      this.bindings = [];
+      $bindings = [];
     },
     getXml: () => (
-      `<visual${getXmlAttributes(this.props)}>${getChildrenXml(this.bindings)}</visual>`
+      `<visual${getXmlAttributes($props)}>${getChildrenXml($bindings)}</visual>`
     ),
   };
 }

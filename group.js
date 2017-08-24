@@ -1,16 +1,22 @@
+import { addChild, addChildren } from './utils/addChild';
 import getChildrenXml from './utils/getChildrenXml';
+import SubGroup from './subgroup';
 
 function Group() {
-  this.subGroups = [];
+  let $subGroups = [];
+  const $allowedChildren = [SubGroup];
   return {
     addSubGroup: (subGroup) => {
-      this.subgroups.push(subGroup);
+      addChild(subGroup, $subGroups, $allowedChildren);
+    },
+    addSubGroups: (subGroups) => {
+      addChildren(subGroups, $subGroups, $allowedChildren);
     },
     clearSubGroups: () => {
-      this.subGroups = [];
+      $subGroups = [];
     },
     getXml: () => (
-      `<group>${getChildrenXml(this.subGroups)}</group>`
+      `<group>${getChildrenXml($subGroups)}</group>`
     ),
   };
 }

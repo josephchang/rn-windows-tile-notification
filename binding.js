@@ -1,6 +1,9 @@
-import isValidStringOption from './utils/isValidStringOption';
 import getChildrenXml from './utils/getChildrenXml';
 import getXmlAttributes from './utils/getXmlAttributes';
+import { addChild, addChildren } from './utils/addChild';
+import Image from './image';
+import Text from './text';
+import Group from './group';
 
 import {
   BRANDING,
@@ -8,42 +11,63 @@ import {
   TILETEMPLATENAMEV1,
   TILETEMPLATENAMEV3,
 } from './constants';
+import validateProps from './utils/validateProps';
 
-function Binding(props = {}) {
-  this.props = {
-    ...props,
+function Binding(options = {}) {
+  const $props = {
+    ...options,
   };
 
-  if (!isValidStringOption(props.branding, BRANDING)) {
-    delete this.props.branding;
-  }
+  let $children = [];
+  const $allowedChildren = [Image, Text];
 
-  if (!isValidStringOption(props['hint-textStacking'], TEXTSTACKING)) {
-    delete this.props['hint-textStacking'];
-  }
+  const rules = {
+    template: {
+      required: true,
+      type: Object.keys(TILETEMPLATENAMEV3),
+      onError: () => delete $props.template,
+    },
+    fallback: {
+      type: Object.keys(TILETEMPLATENAMEV1),
+      onError: () => delete $props.fallback,
+    },
+    lang: 'string',
+    baseUri: 'string',
+    branding: {
+      type: Object.keys(BRANDING),
+      onError: () => delete $props.branding,
+    },
+    addImageQuery: 'boolean',
+    contentId: 'string',
+    displayName: 'string',
+    'hint-textStacking': {
+      type: Object.keys(TEXTSTACKING),
+      onError: () => delete $props['hint-textStacking'],
+    },
+    'hint-overlay': {
+      type: 'custom',
+      validator: v => v >= 0 && v <= 100,
+      onError: () => delete $props['hint-overlay'],
+    },
+  };
 
-  if (!isValidStringOption(props.template, TILETEMPLATENAMEV3)) {
-    delete this.props.template;
-  }
-
-  if (!isValidStringOption(props.fallback, TILETEMPLATENAMEV1)) {
-    delete this.props.fallback;
-  }
-
-  this.children = [];
+  validateProps($props, rules);
 
   return {
     addChild: (child) => {
-      this.children.push(child);
+      addChild(child, $children, $allowedChildren);
+    },
+    addChildren: (children) => {
+      addChildren(children, $children, $allowedChildren);
     },
     removeChildren: () => {
-      this.children = [];
+      $children = [];
     },
     addGroup: (group) => {
-      this.children = [group];
+      addChild(group, $children, [Group]);
     },
     getXml: () => (
-      `<binding${getXmlAttributes(this.props)}>${getChildrenXml(this.children)}</binding>`
+      `<binding${getXmlAttributes($props)}>${getChildrenXml($children)}</binding>`
     ),
   };
 }

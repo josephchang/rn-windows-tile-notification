@@ -1,30 +1,47 @@
 import getChildrenXml from './utils/getChildrenXml';
 import getXmlAttributes from './utils/getXmlAttributes';
-import isValidStringOption from './utils/isValidStringOption';
-
+import validateProps from './utils/validateProps';
+import { addChild, addChildren } from './utils/addChild';
+import Image from './image';
+import Text from './text';
 import {
   TEXTSTACKING,
 } from './constants';
 
-function SubGroup(props) {
-  this.props = {
-    ...props,
+function SubGroup(options) {
+  const $props = {
+    ...options,
   };
 
-  if (!isValidStringOption(props['hint-textStacking'], TEXTSTACKING)) {
-    delete this.props['hint-textStacking'];
-  }
+  let $children = [];
+  const $allowedChildren = [Image, Text];
 
-  this.children = [];
+  const rules = {
+    'hint-textStacking': {
+      type: Object.keys(TEXTSTACKING),
+      onError: () => delete $props['hint-textStacking'],
+    },
+    'hint-weight': {
+      type: 'custom',
+      validator: v => v >= 0 && v <= 100,
+      onError: () => delete $props['hint-weight'],
+    },
+  };
+
+  validateProps($props, rules);
+
   return {
     addChild: (child) => {
-      this.children.push(child);
+      addChild(child, $children, $allowedChildren);
+    },
+    addChildren: (children) => {
+      addChildren(children, $children, $allowedChildren);
     },
     clearChildren: () => {
-      this.children = [];
+      $children = [];
     },
     getXml: () => (
-      `<subgroup${getXmlAttributes(this.props)}>${getChildrenXml(this.children)}</subgroup>`
+      `<subgroup${getXmlAttributes($props)}>${getChildrenXml($children)}</subgroup>`
     ),
   };
 }

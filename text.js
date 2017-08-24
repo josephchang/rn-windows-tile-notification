@@ -1,28 +1,45 @@
-import isValidStringOption from './utils/isValidStringOption';
+import escapeXml from './utils/escapeXml';
 import getXmlAttributes from './utils/getXmlAttributes';
+import validateProps from './utils/validateProps';
 import { TEXTALIGN, TEXTSTYLE } from './constants';
 
-function Text(props = {}) {
-  this.props = {
-    ...props,
+/*
+lang? = string
+  hint-style? = textStyle
+  hint-wrap? = boolean
+  hint-maxLines? = integer
+  hint-minLines? = integer
+  hint-align? = "left" | "center" | "right" >
+ */
+function Text(options = {}) {
+  const $props = {
+    ...options,
+  };
+  let $content = '';
+
+  const rules = {
+    lang: 'string',
+    'hint-style': {
+      type: Object.keys(TEXTSTYLE),
+      onError: () => delete $props['hint-style'],
+    },
+    'hint-wrap': 'boolean',
+    'hint-maxLines': 'number',
+    'hint-minLines': 'number',
+    'hint-align': {
+      type: Object.keys(TEXTALIGN),
+      onError: () => delete $props['hint-align'],
+    },
   };
 
-  if (!isValidStringOption(props['hint-style'], TEXTSTYLE)) {
-    delete this.props['hint-style'];
-  }
-
-  if (!isValidStringOption(props['hint-align'], TEXTALIGN)) {
-    delete this.props['hint-style'];
-  }
-
-  this.content = '';
+  validateProps($props, rules);
 
   return {
     setContent: (content) => {
-      this.content = content;
+      $content = content;
     },
     getXml: () => (
-      `<text${getXmlAttributes(this.props)}>${this.content}</text>`
+      `<text${getXmlAttributes($props)}>${escapeXml($content)}</text>`
     ),
   };
 }
