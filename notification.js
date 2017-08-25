@@ -7,7 +7,9 @@ export default function TileNotification() {
   } = NativeModules.TileNotification;
 
   return {
-    showTileNotification,
-    clearTileNotification,
+    update: (tile) => {
+      showTileNotification(tile.getXml());
+    },
+    clear: clearTileNotification,
   };
 }

@@ -16,7 +16,6 @@
     "eslint-plugin-import": "^2.7.0",
     "mocha": "^3.5.0"
   },
-  "dependencies": {},
   "peerDependencies": {
     "react": "^15.6.1",
     "react-native": "^0.47.2"
