@@ -54,6 +54,7 @@ function Binding(options = {}) {
   validateProps($props, rules);
 
   return {
+    instance: Binding,
     addChild: (child) => {
       addChild(child, $children, $allowedChildren);
     },

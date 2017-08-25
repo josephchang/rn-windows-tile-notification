@@ -31,6 +31,7 @@ function SubGroup(options) {
   validateProps($props, rules);
 
   return {
+    instance: SubGroup,
     addChild: (child) => {
       addChild(child, $children, $allowedChildren);
     },

@@ -4,9 +4,10 @@ function Tile() {
   let $visual = new Visual();
 
   return {
+    instance: Tile,
     visual: $visual,
     setVisual: (visual) => {
-      if (visual instanceof Visual) {
+      if (visual.instance === Visual) {
         $visual = visual;
       }
     },

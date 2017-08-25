@@ -6,6 +6,7 @@ function Group() {
   let $subGroups = [];
   const $allowedChildren = [SubGroup];
   return {
+    instance: Group,
     addSubGroup: (subGroup) => {
       addChild(subGroup, $subGroups, $allowedChildren);
     },

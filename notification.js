@@ -1,15 +1,17 @@
 import { NativeModules } from 'react-native';
 
-export default function TileNotification() {
-  const {
-    showTileNotification,
-    clearTileNotification,
-  } = NativeModules.TileNotification;
+const {
+  showTileNotification,
+  clearTileNotification,
+} = NativeModules.TileNotification;
 
-  return {
-    update: (tile) => {
+const TileNotification = {
+  update: (tile) => {
+    if (tile) {
       showTileNotification(tile.getXml());
-    },
-    clear: clearTileNotification,
-  };
-}
+    }
+  },
+  clear: clearTileNotification,
+};
+
+export default TileNotification;

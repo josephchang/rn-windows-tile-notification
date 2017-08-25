@@ -35,6 +35,7 @@ function Text(options = {}) {
   validateProps($props, rules);
 
   return {
+    instance: Text,
     setContent: (content) => {
       $content = content;
     },

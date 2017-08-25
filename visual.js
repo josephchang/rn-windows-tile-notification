@@ -30,6 +30,7 @@ function Visual(options = {}) {
   validateProps($props, rules);
 
   return {
+    instance: Visual,
     addBinding: (binding) => {
       addChild(binding, $bindings, $allowedChildren);
     },

@@ -29,6 +29,7 @@ function Image(options = {}) {
   validateProps($props, rules);
 
   return {
+    instance: Image,
     getXml: () => (
       `<image${getXmlAttributes($props)} />`
     ),

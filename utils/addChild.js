@@ -1,5 +1,5 @@
 function isInstanceOf(child, instance) {
-  return child instanceof instance;
+  return child.instance === instance;
 }
 
 function addChild(child, destination = [], instances = []) {
