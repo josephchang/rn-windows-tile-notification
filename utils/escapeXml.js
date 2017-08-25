@@ -1,5 +1,9 @@
 function escapeXml(unsafe) {
-  return unsafe.replace(/[<>&'"]/g, (c) => {
+  if (typeof unsafe !== 'string') {
+    return unsafe;
+  }
+
+  return (unsafe || '').replace(/[<>&'"]/g, (c) => {
     switch (c) {
       case '<': return '&lt;';
       case '>': return '&gt;';
